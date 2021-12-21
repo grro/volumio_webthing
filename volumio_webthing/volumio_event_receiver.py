@@ -63,7 +63,9 @@ class ThreadingSimpleServer(ThreadingMixIn, HTTPServer):
 
 
 def register(volumio_uri: str, listen_port: int):
-    response = requests.post(volumio_uri + "/api/v1/pushNotificationUrls",
+    if not volumio_uri.endswith("/"):
+        volumio_uri = volumio_uri + "/"
+    response = requests.post(volumio_uri + "api/v1/pushNotificationUrls",
                              data=json.dumps({"url": "http://localhost:" + str(listen_port)}), headers={"Content-Type": "application/json"})
     if response.status_code == 200:
         logging.debug("listener registered " + response.text)

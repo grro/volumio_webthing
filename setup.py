@@ -35,7 +35,7 @@ setup(
         'webthings', 'home automation', 'volumio', 'radio', 'audio'
     ],
     install_requires=[
-        'webthing==0.15.0'
+        'webthing==0.15.0', 'requests==2.26.0'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -28,14 +28,19 @@ class VolumioListener:
 
 class Volumio(VolumioListener):
 
-    def __init__(self, volumio_base_uri = 'http://10.1.33.30/api/v1/'):
-        self.volumio_base_uri = volumio_base_uri
+    def __init__(self, volumio_base_uri: str):
+        if volumio_base_uri.endswith("/"):
+            self.volumio_base_uri = volumio_base_uri
+        else:
+            self.volumio_base_uri = volumio_base_uri + "/"
         self.__listener = VolumioListener()
         self.__playing = False
         self.__title = ""
         self.__artist = ""
         self.__favourites = []
         self.__favourite = {}
+
+        logging.info("connecting volumio server " + volumio_base_uri)
         self.sync_state()
         self.sync_favourites()
         Thread(target=self.__refresh_favourites_periodically, daemon=True).start()
@@ -117,7 +122,7 @@ class Volumio(VolumioListener):
 
 
     def sync_state(self):
-        response = requests.get(self.volumio_base_uri + '/api/v1/getstate')
+        response = requests.get(self.volumio_base_uri + 'api/v1/getstate')
         if response.status_code == 200:
             data = response.json()
             if 'status' in data.keys():
@@ -130,7 +135,7 @@ class Volumio(VolumioListener):
             logging.warning("could not get state. Got " + response.text)
 
     def sync_favourites(self):
-        response = requests.get(self.volumio_base_uri + '/api/v1/browse?uri=radio/favourites')
+        response = requests.get(self.volumio_base_uri + 'api/v1/browse?uri=radio/favourites')
         if response.status_code == 200:
             favourites = response.json()['navigation']['lists'][0]['items']
             self.on_favourites_updated(favourites)
@@ -145,14 +150,14 @@ class Volumio(VolumioListener):
         return False
 
     def play(self):
-        response = requests.get(self.volumio_base_uri + "/api/v1/commands/?cmd=play")
+        response = requests.get(self.volumio_base_uri + "api/v1/commands/?cmd=play")
         if self.is_success(response):
             logging.debug("start playing")
         else:
             logging.warning("could not start playing. Got " + response.text)
 
     def stop(self):
-        response = requests.get(self.volumio_base_uri + "/api/v1/commands/?cmd=stop")
+        response = requests.get(self.volumio_base_uri + "api/v1/commands/?cmd=stop")
         if self.is_success(response):
             logging.debug("stop playing")
         else:
@@ -161,7 +166,7 @@ class Volumio(VolumioListener):
     def play_favourite(self, station):
         for favourite in self.__favourites:
             if favourite['title'] == station:
-                response = requests.post(self.volumio_base_uri + '/api/v1/replaceAndPlay', json.dumps(favourite), headers={'Content-Type': 'application/json'})
+                response = requests.post(self.volumio_base_uri + 'api/v1/replaceAndPlay', json.dumps(favourite), headers={'Content-Type': 'application/json'})
                 if self.is_success(response):
                     logging.debug("playing station '" + station + "' ")
                 else:
