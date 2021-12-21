@@ -2,7 +2,7 @@ from setuptools import setup
 from os import path
 
 PACKAGENAME = 'volumio_webthing'
-ENTRY_POINT = "volumio"
+ENTRY_POINT = "volumio_webthing"
 DESCRIPTION = "Web connected volumio"
 
 
