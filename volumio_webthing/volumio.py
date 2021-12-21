@@ -174,8 +174,3 @@ class Volumio(VolumioListener):
 
     def play_previous_favourite(self):
         pass
-
-
-
-volumio = Volumio('http://10.1.33.30:3000')
-

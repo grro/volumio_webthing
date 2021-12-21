@@ -1,6 +1,6 @@
 from webthing import (SingleThing, Property, Thing, Value, WebThingServer)
-from volumio import Volumio, VolumioListener
-from volumio_event_receiver import run_event_listener
+from volumio_webthing.volumio import Volumio, VolumioListener
+from volumio_webthing.volumio_event_receiver import run_event_listener
 from typing import List
 import tornado.ioloop
 import logging
@@ -141,5 +141,4 @@ def run_server(port: int, description, volumio_base_uri, event_listener_port: in
         logging.info('done')
 
 
-
-run_server(9070, "test", 'http://10.1.33.30:3000', 9090)
+#run_server(9070, "test", 'http://10.1.33.30:3000', 9091)

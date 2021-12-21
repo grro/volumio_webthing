@@ -1,6 +1,6 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from socketserver import ThreadingMixIn
-from volumio import VolumioListener
+from volumio_webthing.volumio import VolumioListener
 import requests
 import json
 import logging
