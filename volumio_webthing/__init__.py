@@ -1,5 +1,5 @@
 from volumio_webthing.volumio_webthing import run_server
-from app import App
+from volumio_webthing.app import App
 from string import Template
 from typing import Dict
 
