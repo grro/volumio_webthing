@@ -15,4 +15,4 @@ RUN  python /tmp/setup.py install
 WORKDIR /
 RUN rm -r /tmp/
 
-CMD volumio --command listen --port 8080 --volumio_base_uri $volumio_base_uri --event_listener_port 9090
+CMD volumio_webthing --command listen --port 8080 --volumio_base_uri $volumio_base_uri --event_listener_port 9090

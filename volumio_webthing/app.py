@@ -25,18 +25,15 @@ class App(ABC):
     def do_additional_listen_example_params(self):
         return ""
 
-    def print_usage_info(self, port: str, msg: str=None):
+    def print_usage_info(self, port: int, msg: str=None):
         if msg is not None:
             print(msg + "\n")
-
-        if port is None or len(port.strip()) < 1:
-            port = "9496"
 
         print("for command options usage")
         print(" sudo " + self.entrypoint + " --help")
         print("example commands")
-        print(" sudo " + self.entrypoint + " --command register --port " + port + " " + self.do_additional_listen_example_params())
-        print(" sudo " + self.entrypoint + " --command listen --port " + port + " " + self.do_additional_listen_example_params())
+        print(" sudo " + self.entrypoint + " --command register --port " + str(port) + " " + self.do_additional_listen_example_params())
+        print(" sudo " + self.entrypoint + " --command listen --port " + str(port) + " " + self.do_additional_listen_example_params())
         if len(self.unit.list_installed()) > 0:
             print("example commands for registered services")
             for service_info in self.unit.list_installed():
@@ -47,7 +44,7 @@ class App(ABC):
     def handle_command(self):
         parser = argparse.ArgumentParser(description=self.description)
         parser.add_argument('--command', metavar='command', required=False, type=str, help='the command. Supported commands are: listen (run the webthing service), register (register and starts the webthing service as a systemd unit, deregister (deregisters the systemd unit), log (prints the log)')
-        parser.add_argument('--port', metavar='port', required=False, type=int, help='the port of the webthing serivce')
+        parser.add_argument('--port', metavar='port', required=False, type=int, default=9070, help='the port of the webthing serivce')
         parser.add_argument('--verbose', metavar='verbose', required=False, type=bool, default=False, help='activates verbose output')
         self.do_add_argument(parser)
         args = parser.parse_args()
@@ -63,22 +60,15 @@ class App(ABC):
         logging.getLogger('urllib3.connectionpool').disabled = True
 
         if args.command is None:
-            self.print_usage_info(str(args.port))
+            self.print_usage_info(args.port)
         elif args.command == 'deregister':
-            if args.port is None:
-                self.print_usage_info(str(args.port), "--port is mandatory for deregister command")
-            else:
-                self.unit.deregister(int(args.port))
+            self.unit.deregister(args.port)
         elif args.command == 'log':
-            if args.port is None:
-                self.print_usage_info(str(args.port), "--port is mandatory for log command")
-            else:
-                self.unit.printlog(int(args.port))
+            self.unit.printlog(args.port)
         else:
-            if args.port is not None:
-                if self.do_process_command(args.command, args.port, args.verbose, args):
-                    return
-            self.print_usage_info(str(args.port))
+            if self.do_process_command(args.command, args.port, args.verbose, args):
+                return
+            self.print_usage_info(args.port)
 
 
 
