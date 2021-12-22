@@ -24,6 +24,9 @@ class VolumioListener:
     def on_favourite_updated(self, stationname: str):
         pass
 
+    def on_albumart_updated(self, albumart_uri):
+        pass
+
 
 
 class Volumio(VolumioListener):
@@ -37,6 +40,7 @@ class Volumio(VolumioListener):
         self.__playing = False
         self.__title = ""
         self.__artist = ""
+        self.__albumart = ""
         self.__favourites = []
         self.__favourite = {}
 
@@ -67,6 +71,10 @@ class Volumio(VolumioListener):
     @favourite_station.setter
     def favourite_station(self, station: str):
         self.play_favourite(station)
+
+    @property
+    def albumart(self):
+        return self.__albumart
 
     @property
     def title(self):
@@ -120,6 +128,10 @@ class Volumio(VolumioListener):
     def on_favourite_updated(self, stationname: str):
         self.__listener.on_favourite_updated(stationname)
 
+    def on_albumart_updated(self, albumart):
+        if albumart != self.__albumart:
+            self.__albumart = albumart
+            self.__listener.on_albumart_updated(albumart)
 
     def sync_state(self):
         response = requests.get(self.volumio_base_uri + 'api/v1/getstate')
@@ -131,6 +143,10 @@ class Volumio(VolumioListener):
                 self.on_artist_updated(data['artist'])
             if 'title' in data.keys():
                 self.on_title_updated(data['title'])
+            albumart = data.get('albumart', '')
+            if albumart.startswith("/"):
+                albumart = self.volumio_base_uri[:-1] + albumart
+            self.on_albumart_updated(albumart)
         else:
             logging.warning("could not get state. Got " + response.text)
 
@@ -179,3 +195,8 @@ class Volumio(VolumioListener):
 
     def play_previous_favourite(self):
         pass
+
+
+
+
+volumio = Volumio('http://10.1.33.30:3000')

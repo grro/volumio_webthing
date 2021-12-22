@@ -40,6 +40,7 @@ class StateHandler:
         self.status = ""
         self.artist = ""
         self.title = ""
+        self.albumart = ""
 
     def handle_state(self, data):
         status = data.get('status', '')
@@ -55,7 +56,10 @@ class StateHandler:
         if title != self.title:
             self.title = title
             self.listener.on_title_updated(title)
-
+        albumart = data.get('albumart', '')
+        if albumart != self.albumart:
+            self.albumart = albumart
+            self.listener.on_albumart_updated(albumart)
 
 
 class ThreadingSimpleServer(ThreadingMixIn, HTTPServer):

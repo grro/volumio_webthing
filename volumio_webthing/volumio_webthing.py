@@ -58,6 +58,18 @@ class VolumioThing(Thing, VolumioListener):
                          'readOnly': True
                      }))
 
+        self.albumart = Value(volumio.albumart)
+        self.add_property(
+            Property(self,
+                     'albumart',
+                     self.albumart,
+                     metadata={
+                         'title': 'albumart',
+                         'type': 'string',
+                         'description': 'the albumart uri',
+                         'readOnly': True
+                     }))
+
         self.favourite_station = Value(volumio.favourite_station, self.__favourite_station)
         self.add_property(
             Property(self,
@@ -121,6 +133,11 @@ class VolumioThing(Thing, VolumioListener):
     def __favourite_station(self, favourite_station: str):
         self.volumio.favourite_station = favourite_station
 
+    def on_albumart_updated(self, albumart_uri):
+        self.ioloop.add_callback(self.__update_albumart, albumart_uri)
+
+    def __update_albumart(self, albumart_uri: str):
+        self.albumart.notify_of_external_update(albumart_uri)
 
 
 def run_server(port: int, description, volumio_base_uri, event_listener_port: int):
