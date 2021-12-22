@@ -5,7 +5,7 @@ from typing import Dict
 
 
 PACKAGENAME = 'volumio_webthing'
-ENTRY_POINT = "volumio"
+ENTRY_POINT = "volumio_webthing"
 DESCRIPTION = "A web connected volumio"
 
 
