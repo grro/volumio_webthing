@@ -152,14 +152,14 @@ class Volumio(VolumioListener):
     def play(self):
         response = requests.get(self.volumio_base_uri + "api/v1/commands/?cmd=play")
         if self.is_success(response):
-            logging.debug("start playing")
+            logging.info("start playing")
         else:
             logging.warning("could not start playing. Got " + response.text)
 
     def stop(self):
         response = requests.get(self.volumio_base_uri + "api/v1/commands/?cmd=stop")
         if self.is_success(response):
-            logging.debug("stop playing")
+            logging.info("stop playing")
         else:
             logging.warning("could not stop playing. Got " + response.text)
 
@@ -168,7 +168,7 @@ class Volumio(VolumioListener):
             if favourite['title'] == station:
                 response = requests.post(self.volumio_base_uri + 'api/v1/replaceAndPlay', json.dumps(favourite), headers={'Content-Type': 'application/json'})
                 if self.is_success(response):
-                    logging.debug("playing station '" + station + "' ")
+                    logging.info("playing station '" + station + "' ")
                 else:
                     logging.warning("could set station " + station + ". Got " + response.text)
                 return
