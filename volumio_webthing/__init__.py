@@ -47,11 +47,11 @@ def parse_credentials(credentials) -> Dict[str, str]:
 class InternetApp(App):
 
     def do_add_argument(self, parser):
-        parser.add_argument('--volumio_base_uri', metavar='volumio_base_uri', required=False, type=str, help='the volumio base uri such as http://10.1.33.30:3000')
+        parser.add_argument('--volumio_base_uri', metavar='volumio_base_uri', required=False, type=str, default="http://localhost:3000", help='the volumio base uri such as http://10.5.55.30:3000')
         parser.add_argument('--event_listener_port', metavar='event_listener_port', required=False, type=int, default=9090, help='the event listener port')
 
     def do_additional_listen_example_params(self):
-        return "--volumio_base_uri http://10.1.33.30:3000"
+        return "--volumio_base_uri http://10.5.55.30:3000"
 
     def do_process_command(self, command:str, port: int, verbose: bool, args) -> bool:
         if command == 'listen' and (args.volumio_base_uri is not None):

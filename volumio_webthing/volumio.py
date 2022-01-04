@@ -181,31 +181,35 @@ class Volumio(VolumioListener):
         else:
             logging.warning("could not stop playing. Got " + response.text)
 
-    def play_favourite(self, station_to_play):
-        favoured_station = None
+    def play_favourite(self, station_to_play) -> bool:
+        station = None
 
         # exact match
         for favourite in self.__favourites:
             if favourite['title'].lower() == station_to_play.lower():
-                favoured_station = favourite['title']
+                station = favourite
                 break
 
         # approximately match
-        if favoured_station is None:
+        if station is None:
             for favourite in self.__favourites:
                 if favourite['title'].lower().startswith(station_to_play.lower()):
-                    favoured_station = favourite['title']
+                    station = favourite
                     break
 
         # play station
-        if favoured_station is None:
+        if station is None:
             logging.warning("station " + station_to_play + " is unknown")
         else:
-            response = requests.post(self.volumio_base_uri + 'api/v1/replaceAndPlay', json.dumps(favoured_station), headers={'Content-Type': 'application/json'})
+            uri = self.volumio_base_uri + 'api/v1/replaceAndPlay'
+            payload = json.dumps({'item': station})
+            response = requests.post(uri, payload, headers={'Content-Type': 'application/json'})
             if self.is_success(response):
                 logging.info("playing station '" + station_to_play + "' ")
+                return True
             else:
                 logging.warning("could set station " + station_to_play + ". Got " + response.text)
+        return False
 
 
 
@@ -214,4 +218,6 @@ if __name__ == "__main__":
     voluimo_url = sys.argv[1]
     volumio = Volumio(voluimo_url)
     print(volumio.favourite_stations)
+    print(volumio.play_favourite("Swr3"))
+    print(volumio.play_favourite("Beats"))
 '''
