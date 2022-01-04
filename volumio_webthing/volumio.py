@@ -199,7 +199,9 @@ class Volumio(VolumioListener):
         pass
 
 
+'''
 if __name__ == "__main__":
     voluimo_url = sys.argv[1]
     volumio = Volumio(voluimo_url)
     print(volumio.favourite_stations)
+'''
