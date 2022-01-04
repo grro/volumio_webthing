@@ -55,11 +55,6 @@ class App(ABC):
         else:
             log_level=logging.INFO
 
-        print("using log level " + str(log_level))
-        logging.basicConfig(format='%(asctime)s %(name)-20s: %(levelname)-8s %(message)s', level=log_level, datefmt='%Y-%m-%d %H:%M:%S')
-        logging.getLogger('tornado.access').disabled = True
-        logging.getLogger('urllib3.connectionpool').disabled = True
-
 
         if args.command is None:
             self.print_usage_info(args.port)

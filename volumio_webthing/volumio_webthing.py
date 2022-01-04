@@ -3,7 +3,6 @@ from volumio_webthing.volumio import Volumio, VolumioListener
 from volumio_webthing.volumio_event_receiver import run_event_listener
 from typing import List
 import tornado.ioloop
-import logging
 
 
 
@@ -150,12 +149,11 @@ def run_server(port: int, description, volumio_base_uri, event_listener_port: in
 
     try:
         # start webthing server
-        logging.info('starting the server listing on ' + str(port))
+        print('starting the server listing on ' + str(port))
         server.start()
     except KeyboardInterrupt:
-        logging.info('stopping the server')
+        print('stopping the server')
         server.stop()
-        logging.info('done')
 
 
 #run_server(9070, "test", 'http://10.1.33.30:3000', 9091)

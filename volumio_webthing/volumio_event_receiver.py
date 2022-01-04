@@ -3,7 +3,6 @@ from socketserver import ThreadingMixIn
 from volumio_webthing.volumio import VolumioListener
 import requests
 import json
-import logging
 import threading
 
 
@@ -29,7 +28,7 @@ class EventHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(b'OK')
         except Exception as e:
-            logging.warning(e)
+            print(e)
 
 
 
@@ -72,9 +71,9 @@ def register(volumio_uri: str, listen_port: int):
     response = requests.post(volumio_uri + "api/v1/pushNotificationUrls",
                              data=json.dumps({"url": "http://localhost:" + str(listen_port)}), headers={"Content-Type": "application/json"})
     if response.status_code == 200:
-        logging.debug("listener registered " + response.text)
+        print("listener registered " + response.text)
     else:
-        logging.warning("could not register listener. Got " + response.text)
+        print("could not register listener. Got " + response.text)
 
 
 def run(listener: VolumioListener, volumio_base_uri: str, listen_port: int):
