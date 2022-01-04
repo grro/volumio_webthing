@@ -1,3 +1,4 @@
+import logging
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from socketserver import ThreadingMixIn
 from volumio_webthing.volumio import VolumioListener
@@ -21,14 +22,14 @@ class EventHandler(BaseHTTPRequestHandler):
                 elif j['item'] == 'queue':
                     pass
                 else:
-                    print("UNKOWN EVENT " + body)
+                    logging.warning("UNKOWN EVENT " + body)
             except Exception as e:
-                print(e)
+                logging.warning(e)
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b'OK')
         except Exception as e:
-            print(e)
+            logging.warning(e)
 
 
 
@@ -71,9 +72,9 @@ def register(volumio_uri: str, listen_port: int):
     response = requests.post(volumio_uri + "api/v1/pushNotificationUrls",
                              data=json.dumps({"url": "http://localhost:" + str(listen_port)}), headers={"Content-Type": "application/json"})
     if response.status_code == 200:
-        print("listener registered " + response.text)
+        logging.info("listener registered " + response.text)
     else:
-        print("could not register listener. Got " + response.text)
+        logging.warning("could not register listener. Got " + response.text)
 
 
 def run(listener: VolumioListener, volumio_base_uri: str, listen_port: int):
@@ -81,7 +82,7 @@ def run(listener: VolumioListener, volumio_base_uri: str, listen_port: int):
 
     EventHandler.handler = StateHandler(listener)
     server = ThreadingSimpleServer(('0.0.0.0', listen_port), EventHandler)
-    print("event server listening on " + str(listen_port))
+    logging.info("event server listening on " + str(listen_port))
     server.serve_forever()
 
 

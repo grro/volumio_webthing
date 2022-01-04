@@ -1,3 +1,4 @@
+import logging
 from webthing import (SingleThing, Property, Thing, Value, WebThingServer)
 from volumio_webthing.volumio import Volumio, VolumioListener
 from volumio_webthing.volumio_event_receiver import run_event_listener
@@ -149,10 +150,10 @@ def run_server(port: int, description, volumio_base_uri, event_listener_port: in
 
     try:
         # start webthing server
-        print('starting the server listing on ' + str(port))
+        logging.info('starting the server listing on ' + str(port))
         server.start()
     except KeyboardInterrupt:
-        print('stopping the server')
+        logging.info('stopping the server')
         server.stop()
 
 

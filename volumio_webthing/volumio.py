@@ -1,4 +1,4 @@
-import sys
+import logging
 import requests
 import json
 import time
@@ -44,7 +44,7 @@ class Volumio(VolumioListener):
         self.__favourites = []
         self.__favourite = {}
 
-        print("connecting volumio server " + volumio_base_uri)
+        logging.info("connecting volumio server " + volumio_base_uri)
         self.sync_state()
         self.sync_favourites()
         Thread(target=self.__refresh_favourites_periodically, daemon=True).start()
@@ -55,7 +55,7 @@ class Volumio(VolumioListener):
                 time.sleep(5 * 60)
                 self.sync_favourites()
             except Exception as e:
-                print("error occurred by fetching favourites")
+                logging.error("error occurred by fetching favourites")
 
     def set_listener(self, listener: VolumioListener):
         self.__listener = listener
@@ -148,7 +148,7 @@ class Volumio(VolumioListener):
                 albumart = self.volumio_base_uri[:-1] + albumart
             self.on_albumart_updated(albumart)
         else:
-            print("could not get state. Got " + response.text)
+            logging.warning("could not get state. Got " + response.text)
 
     def sync_favourites(self):
         response = requests.get(self.volumio_base_uri + 'api/v1/browse?uri=radio/favourites')
@@ -156,7 +156,7 @@ class Volumio(VolumioListener):
             favourites = response.json()['navigation']['lists'][0]['items']
             self.on_favourites_updated(favourites)
         else:
-            print("could not get favourites. Got " + response.text)
+            logging.warning("could not get favourites. Got " + response.text)
 
     def is_success(self, response):
         if response.status_code == 200:
@@ -168,53 +168,53 @@ class Volumio(VolumioListener):
     def play(self):
         response = requests.get(self.volumio_base_uri + "api/v1/commands/?cmd=play")
         if self.is_success(response):
-            print("start playing")
+            logging.info("start playing")
         else:
-            print("could not start playing. Got " + response.text)
+            logging.warning("could not start playing. Got " + response.text)
 
     def stop(self):
         response = requests.get(self.volumio_base_uri + "api/v1/commands/?cmd=stop")
         if self.is_success(response):
-            print("stop playing")
+            logging.info("stop playing")
         else:
-            print("could not stop playing. Got " + response.text)
+            logging.warning("could not stop playing. Got " + response.text)
 
     def play_favourite(self, station_to_play) -> bool:
         station = None
 
         # exact match
         for favourite in self.__favourites:
-            if favourite['title'].lower() == station_to_play.lower():
+            if favourite['title'].strip().lower() == station_to_play.lower():
                 station = favourite
                 break
 
         # approximately match
         if station is None:
             for favourite in self.__favourites:
-                if favourite['title'].lower().startswith(station_to_play.lower()):
+                if favourite['title'].strip().lower().startswith(station_to_play.lower()):
                     station = favourite
                     break
 
         # play station
         if station is None:
-            print("station " + station_to_play + " is unknown")
+            logging.warning("station " + station_to_play + " is unknown")
         else:
             uri = self.volumio_base_uri + 'api/v1/replaceAndPlay'
             payload = json.dumps({'item': station})
             response = requests.post(uri, payload, headers={'Content-Type': 'application/json'})
             if self.is_success(response):
-                print("playing station '" + station_to_play + "' ")
+                logging.info("playing station '" + station_to_play + "' ")
                 return True
             else:
-                print("could set station " + station_to_play + ". Got " + response.text)
+                logging.warning("could set station " + station_to_play + ". Got " + response.text)
         return False
 
 
-
-
+'''
 if __name__ == "__main__":
     voluimo_url = sys.argv[1]
     volumio = Volumio(voluimo_url)
     print(volumio.favourite_stations)
     print(volumio.play_favourite("Swr3"))
     print(volumio.play_favourite("Beats"))
+'''
