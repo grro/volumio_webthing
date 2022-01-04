@@ -181,31 +181,31 @@ class Volumio(VolumioListener):
         else:
             logging.warning("could not stop playing. Got " + response.text)
 
-    def play_favourite(self, station):
+    def play_favourite(self, station_to_play):
         favoured_station = None
 
         # exact match
         for favourite in self.__favourites:
-            if favourite['title'] == station:
+            if favourite['title'].lower() == station_to_play.lower():
                 favoured_station = favourite['title']
                 break
 
         # approximately match
         if favoured_station is None:
             for favourite in self.__favourites:
-                if favourite['title'].startswith(station):
+                if favourite['title'].lower().startswith(station_to_play.lower()):
                     favoured_station = favourite['title']
                     break
 
         # play station
         if favoured_station is None:
-            logging.warning("station " + station + " is unknown")
+            logging.warning("station " + station_to_play + " is unknown")
         else:
             response = requests.post(self.volumio_base_uri + 'api/v1/replaceAndPlay', json.dumps(favoured_station), headers={'Content-Type': 'application/json'})
             if self.is_success(response):
-                logging.info("playing station '" + station + "' ")
+                logging.info("playing station '" + station_to_play + "' ")
             else:
-                logging.warning("could set station " + station + ". Got " + response.text)
+                logging.warning("could set station " + station_to_play + ". Got " + response.text)
 
 
 
