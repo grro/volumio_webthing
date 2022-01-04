@@ -169,6 +169,7 @@ class Volumio(VolumioListener):
         response = requests.get(self.volumio_base_uri + "api/v1/commands/?cmd=play")
         if self.is_success(response):
             logging.info("start playing")
+            self.sync_state()
         else:
             logging.warning("could not start playing. Got " + response.text)
 
@@ -204,6 +205,7 @@ class Volumio(VolumioListener):
             response = requests.post(uri, payload, headers={'Content-Type': 'application/json'})
             if self.is_success(response):
                 logging.info("playing station '" + station_to_play + "' ")
+                self.sync_state()
                 return True
             else:
                 logging.warning("could set station " + station_to_play + ". Got " + response.text)
