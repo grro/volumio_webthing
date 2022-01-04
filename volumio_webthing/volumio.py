@@ -1,4 +1,6 @@
 import logging
+import sys
+
 import requests
 import json
 import time
@@ -52,7 +54,7 @@ class Volumio(VolumioListener):
     def __refresh_favourites_periodically(self):
         while True:
             try:
-                time.sleep(15 * 60)
+                time.sleep(5 * 60)
                 self.sync_favourites()
             except Exception as e:
                 print("error occurred by fetching favourites")
@@ -197,6 +199,7 @@ class Volumio(VolumioListener):
         pass
 
 
-
-
-volumio = Volumio('http://10.1.33.30:3000')
+if __name__ == "__main__":
+    voluimo_url = sys.argv[1]
+    volumio = Volumio(voluimo_url)
+    print(volumio.favourite_stations)
