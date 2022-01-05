@@ -177,6 +177,7 @@ class Volumio(VolumioListener):
         response = requests.get(self.volumio_base_uri + "api/v1/commands/?cmd=stop")
         if self.is_success(response):
             logging.info("stop playing")
+            self.sync_state()
         else:
             logging.warning("could not stop playing. Got " + response.text)
 
