@@ -134,7 +134,7 @@ class Volumio(VolumioListener):
             self.__listener.on_albumart_updated(albumart)
 
     def sync_state(self):
-        response = requests.get(self.volumio_base_uri + 'api/v1/getstate')
+        response = requests.get(self.volumio_base_uri + 'api/v1/getstate', timeout=7)
         if response.status_code == 200:
             data = response.json()
             if 'status' in data.keys():
@@ -151,7 +151,7 @@ class Volumio(VolumioListener):
             logging.warning("could not get state. Got " + response.text)
 
     def sync_favourites(self):
-        response = requests.get(self.volumio_base_uri + 'api/v1/browse?uri=radio/favourites')
+        response = requests.get(self.volumio_base_uri + 'api/v1/browse?uri=radio/favourites', timeout=7)
         if response.status_code == 200:
             favourites = response.json()['navigation']['lists'][0]['items']
             self.on_favourites_updated(favourites)
@@ -166,7 +166,7 @@ class Volumio(VolumioListener):
         return False
 
     def play(self):
-        response = requests.get(self.volumio_base_uri + "api/v1/commands/?cmd=play")
+        response = requests.get(self.volumio_base_uri + "api/v1/commands/?cmd=play", timeout=7)
         if self.is_success(response):
             logging.info("start playing")
             self.sync_state()
@@ -174,7 +174,7 @@ class Volumio(VolumioListener):
             logging.warning("could not start playing. Got " + response.text)
 
     def stop(self):
-        response = requests.get(self.volumio_base_uri + "api/v1/commands/?cmd=stop")
+        response = requests.get(self.volumio_base_uri + "api/v1/commands/?cmd=stop", timeout=7)
         if self.is_success(response):
             logging.info("stop playing")
             self.sync_state()
@@ -203,7 +203,7 @@ class Volumio(VolumioListener):
         else:
             uri = self.volumio_base_uri + 'api/v1/replaceAndPlay'
             payload = json.dumps({'item': station})
-            response = requests.post(uri, payload, headers={'Content-Type': 'application/json'})
+            response = requests.post(uri, payload, headers={'Content-Type': 'application/json'}, timeout=7)
             if self.is_success(response):
                 logging.info("playing station '" + station_to_play + "' ")
                 self.sync_state()
